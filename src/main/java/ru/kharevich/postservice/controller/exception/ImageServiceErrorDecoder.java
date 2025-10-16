@@ -9,6 +9,9 @@ import ru.kharevich.postservice.exception.ImageServiceInternalError;
 
 import java.io.IOException;
 
+import static ru.kharevich.postservice.util.constants.PostServiceResponseMessages.ERROR_IN_IMAGE_SERVICE_MESSAGE;
+import static ru.kharevich.postservice.util.constants.PostServiceResponseMessages.IMAGE_NOT_FOUND_MESSAGE;
+
 @Slf4j
 public class ImageServiceErrorDecoder implements ErrorDecoder {
     @Override
@@ -27,8 +30,8 @@ public class ImageServiceErrorDecoder implements ErrorDecoder {
                 methodKey, response.status(), response.reason(), responseBody);
 
         if (response.status() == 404) {
-            return new EntityNotFoundException("image not found");
+            return new EntityNotFoundException(IMAGE_NOT_FOUND_MESSAGE);
         }
-        return new ImageServiceInternalError("error in image service");
+        return new ImageServiceInternalError(ERROR_IN_IMAGE_SERVICE_MESSAGE);
     }
 }

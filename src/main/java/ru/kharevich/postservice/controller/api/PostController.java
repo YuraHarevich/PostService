@@ -17,11 +17,11 @@ import java.util.UUID;
 public interface PostController {
 
     PostResponse create(@RequestPart("body") PostRequest request,
-                               @RequestPart("files") @NotEmptyFiles List<MultipartFile> files);
+                        @RequestPart("files") @NotEmptyFiles List<MultipartFile> files);
 
     void delete(@Valid UUID id);
 
-    PostResponse update(@Valid PostRequest request,@PathVariable UUID id);
+    PostResponse update(@Valid PostRequest request, @PathVariable UUID id);
 
     PageableResponse<PostResponse> getFeed(@RequestParam(defaultValue = "0") @Min(0) int page_number,
                                            @RequestParam(defaultValue = "20") int size);

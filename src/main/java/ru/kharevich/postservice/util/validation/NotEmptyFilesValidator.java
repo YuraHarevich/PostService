@@ -22,6 +22,7 @@ public class NotEmptyFilesValidator implements ConstraintValidator<NotEmptyFiles
         }
         return files.stream().anyMatch(this::isValidFile);
     }
+
     private boolean isValidFile(MultipartFile file) {
         return file != null && !file.isEmpty() && !Objects.equals(file.getOriginalFilename(), "");
     }

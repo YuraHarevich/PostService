@@ -4,13 +4,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public record PostResponse (
+public record PostResponse(
 
         UUID id,
 
         String text,
 
         String author,
+
+        UUID authorId,
 
         Integer numberOfLikes,
 
@@ -20,5 +22,5 @@ public record PostResponse (
 
         List<byte[]> files
 
-){
+) {
 }

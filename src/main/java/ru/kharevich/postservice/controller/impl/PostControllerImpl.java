@@ -1,6 +1,6 @@
 package ru.kharevich.postservice.controller.impl;
 
-import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,13 +50,14 @@ public class PostControllerImpl implements PostController {
 
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public PostResponse update(PostRequest request,  @PathVariable UUID id) {
+    public PostResponse update(PostRequest request, @PathVariable UUID id) {
         return postService.update(request, id);
     }
 
     @GetMapping("feed")
     @ResponseStatus(HttpStatus.OK)
-    public PageableResponse<PostResponse> getFeed(int page_number, int size) {
+    public PageableResponse<PostResponse> getFeed(@RequestParam(defaultValue = "0") @Min(0) int page_number,
+                                                  @RequestParam(defaultValue = "10") int size) {
         return postService.getFeed(page_number, size);
     }
 
@@ -67,8 +69,8 @@ public class PostControllerImpl implements PostController {
 
     @GetMapping("author/{author}")
     @ResponseStatus(HttpStatus.OK)
-    public PageableResponse<PostResponse> getPostsByAuthor(int page_number, int size,@PathVariable String author) {
-        return postService.getPostsByAuthor(page_number,size,author);
+    public PageableResponse<PostResponse> getPostsByAuthor(int page_number, int size, @PathVariable String author) {
+        return postService.getPostsByAuthor(page_number, size, author);
     }
 
 }

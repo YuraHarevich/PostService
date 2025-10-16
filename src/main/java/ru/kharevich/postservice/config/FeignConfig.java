@@ -1,4 +1,5 @@
 package ru.kharevich.postservice.config;
+
 import feign.codec.Encoder;
 import feign.form.spring.SpringFormEncoder;
 import org.springframework.beans.factory.ObjectFactory;
@@ -18,4 +19,5 @@ public class FeignConfig {
     ) {
         return new SpringFormEncoder(new SpringEncoder(messageConverters));
     }
+
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PostService {
+
     PostResponse create(PostRequest request, List<MultipartFile> files);
 
     void delete(UUID id);

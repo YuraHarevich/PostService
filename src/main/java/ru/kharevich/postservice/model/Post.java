@@ -35,6 +35,9 @@ public class Post {
     @Column(name = "author", nullable = false)
     private String author;
 
+    @Column(name = "author_id", nullable = false)
+    private UUID authorId;
+
     @Column(name = "number_of_likes", nullable = false)
     @Builder.Default
     private Integer numberOfLikes = 0;

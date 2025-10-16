@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static ru.kharevich.postservice.util.constants.PostServiceResponseMessages.IMAGE_PARSE_ERROR_MESSAGE;
+import static ru.kharevich.postservice.util.constants.PostServiceResponseMessages.POST_NOT_FOUND_MESSAGE;
+
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
@@ -45,21 +48,21 @@ public class PostServiceImpl implements PostService {
         postRepository.saveAndFlush(post);
         imageClient.uploadImage(ImageType.POST_ATTACHMENT.toString(), post.getId().toString(), files);
         List<byte[]> bytes = new ArrayList<>();
-            files.forEach(imageFile -> {
-                try {
-                    bytes.add(imageFile.getBytes());
-                } catch (IOException e) {
-                    throw new PostServiceInternalError("unable to parse image file");
-                }
-            });
-            PostResponse response = postMapper.toResponse(post, bytes);
+        files.forEach(imageFile -> {
+            try {
+                bytes.add(imageFile.getBytes());
+            } catch (IOException e) {
+                throw new PostServiceInternalError(IMAGE_PARSE_ERROR_MESSAGE);
+            }
+        });
+        PostResponse response = postMapper.toResponse(post, bytes);
         return response;
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void delete(UUID id) {
         postValidationService.findByIdThrowsExceptionIfDoesntExist(id,
-                new PostNotFoundException("post not found"));
+                new PostNotFoundException(POST_NOT_FOUND_MESSAGE));
         postRepository.deleteById(id);
         imageClient.deleteImageByParentId(id);
     }
@@ -67,24 +70,19 @@ public class PostServiceImpl implements PostService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public PostResponse update(PostRequest request, UUID id) {
         Post post = postValidationService.findByIdThrowsExceptionIfDoesntExist(id,
-                new PostNotFoundException("post not found"));
+                new PostNotFoundException(POST_NOT_FOUND_MESSAGE));
         postMapper.updateEntityByRequest(request, post);
         return postMapper.toResponse(post, null);
     }
 
     public PageableResponse<PostResponse> getFeed(int pageNumber, int size) {
         Page<Post> posts = postRepository.findAll(PageRequest.of(pageNumber, size));
-        Page<PostResponse> postResponses = posts.map(post -> {
-            ImageResponse imageResponse = imageClient.getImageByParentId(post.getId());
-            List<byte[]> files = imageResponse.files().stream().map(FileTransferEntity::file).toList();
-            return postMapper.toResponse(post, files);
-        });
-        return pageMapper.toResponse(postResponses);
+        return fillPostsWithImages(posts, pageNumber, size);
     }
 
     public PostResponse getById(UUID id) {
         Post post = postValidationService.findByIdThrowsExceptionIfDoesntExist(id,
-                new PostNotFoundException("post not found"));
+                new PostNotFoundException(POST_NOT_FOUND_MESSAGE));
         ImageResponse imageResponse = imageClient.getImageByParentId(id);
         return postMapper.toResponse(post, imageResponse.files().stream().map(FileTransferEntity::file).toList());
     }
@@ -92,10 +90,22 @@ public class PostServiceImpl implements PostService {
     public PageableResponse<PostResponse> getPostsByAuthor(int pageNumber,
                                                            int size,
                                                            String author) {
-        Page<Post> posts = postRepository.findByAuthor(author, PageRequest.of(pageNumber,size));
+        Page<Post> posts = postRepository.findByAuthor(author, PageRequest.of(pageNumber, size));
+        return fillPostsWithImages(posts, pageNumber, size);
+    }
+
+    private PageableResponse<PostResponse> fillPostsWithImages(Page<Post> posts,
+                                                               int pageNumber,
+                                                               int size) {
+        List<UUID> ids = posts.map(Post::getId).stream().toList();
+        PageableResponse<ImageResponse> images = imageClient.getImagesByParentId(ids, pageNumber, size);
         Page<PostResponse> postResponses = posts.map(post -> {
-            ImageResponse imageResponse = imageClient.getImageByParentId(post.getId());
-            List<byte[]> files = imageResponse.files().stream().map(FileTransferEntity::file).toList();
+            List<byte[]> files = images.content()
+                    .stream()
+                    .filter(response -> response.parentId().equals(post.getId()))
+                    .findFirst()
+                    .get().files()
+                    .stream().map(FileTransferEntity::file).toList();
             return postMapper.toResponse(post, files);
         });
         return pageMapper.toResponse(postResponses);

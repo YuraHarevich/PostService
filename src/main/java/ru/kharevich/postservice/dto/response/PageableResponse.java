@@ -3,7 +3,7 @@ package ru.kharevich.postservice.dto.response;
 
 import java.util.List;
 
-public record PageableResponse<T> (
+public record PageableResponse<T>(
 
         long totalElements,
 
