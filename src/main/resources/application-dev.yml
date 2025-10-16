@@ -1,0 +1,30 @@
+server:
+  port: 8030
+spring:
+  application:
+    name: post-service
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        default_schema: post_schema
+  liquibase:
+    change-log: classpath:/db/changelog/app-changelog.xml
+  datasource:
+    driver-class-name: ${DB_DRIVER:org.postgresql.Driver}
+    url: ${DB_URL:jdbc:postgresql://localhost:5435/posts}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:password}
+  cloud:
+    openfeign:
+      client:
+        config:
+          image-client:
+            url: "http://localhost:8010/api/v1/images"
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB

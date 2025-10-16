@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: post-service-test
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        default_schema: post_schema
+  liquibase:
+    enabled: false
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5434/testdb
+    username: testuser
+    password: testpass
+  cloud:
+    openfeign:
+      client:
+        config:
+          image-client:
+            url: "http://localhost:8010/api/v1/images"
