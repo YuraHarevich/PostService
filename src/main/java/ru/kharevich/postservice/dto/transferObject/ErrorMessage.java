@@ -1,4 +1,4 @@
-package ru.kharevich.postservice.dto;
+package ru.kharevich.postservice.dto.transferObject;
 
 import lombok.Builder;
 import lombok.Data;

@@ -19,5 +19,5 @@ public interface PostService {
 
     PostResponse getById(UUID id);
 
-    PageableResponse<PostResponse> getPostsByAuthor(int pageNumber, int size, UUID author);
+    PageableResponse<PostResponse> getPostsByAuthor(int pageNumber, int size, String author);
 }

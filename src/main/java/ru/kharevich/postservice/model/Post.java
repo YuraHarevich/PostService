@@ -32,8 +32,16 @@ public class Post {
     @Column(name = "text", nullable = false)
     private String text;
 
-    @Column(name = "author_id", nullable = false)
-    private UUID authorId;
+    @Column(name = "author", nullable = false)
+    private String author;
+
+    @Column(name = "number_of_likes", nullable = false)
+    @Builder.Default
+    private Integer numberOfLikes = 0;
+
+    @Column(name = "number_of_comments", nullable = false)
+    @Builder.Default
+    private Integer numberOfComments = 0;
 
     @Column(name = "created_at", nullable = false)
     @CreationTimestamp

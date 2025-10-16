@@ -16,6 +16,7 @@ import ru.kharevich.postservice.dto.request.ImageRequest;
 import ru.kharevich.postservice.dto.response.ImageResponse;
 import ru.kharevich.postservice.model.ImageType;
 
+import java.util.List;
 import java.util.UUID;
 
 @FeignClient(
@@ -29,12 +30,7 @@ public interface ImageClient{
     ImageResponse uploadImage(
             @RequestPart("imageType") String imageType,
             @RequestPart("parentEntityId") String parentEntityId,
-            @RequestPart("file") MultipartFile file);
-
-//    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//    ImageResponse uploadImage(
-//            @RequestBody ImageRequest request
-//    );
+            @RequestPart("file") List<MultipartFile> file);
 
     @GetMapping("/parent")
     ImageResponse getImageByParentId(@RequestParam UUID id);

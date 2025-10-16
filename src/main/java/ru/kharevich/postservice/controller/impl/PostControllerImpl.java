@@ -1,9 +1,10 @@
 package ru.kharevich.postservice.controller.impl;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,6 +20,7 @@ import ru.kharevich.postservice.dto.request.PostRequest;
 import ru.kharevich.postservice.dto.response.PageableResponse;
 import ru.kharevich.postservice.dto.response.PostResponse;
 import ru.kharevich.postservice.service.PostService;
+import ru.kharevich.postservice.util.annotations.NotEmptyFiles;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,6 +28,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/v1/posts")
+@Validated
 public class PostControllerImpl implements PostController {
 
     private final PostService postService;
@@ -33,7 +36,7 @@ public class PostControllerImpl implements PostController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.ACCEPTED)
     public PostResponse create(@RequestPart("body") PostRequest request,
-                               @RequestPart("files") List<MultipartFile> files) {
+                               @RequestPart("files") @NotEmptyFiles List<MultipartFile> files) {
         PostResponse response = postService.create(request, files);
         return response;
     }
@@ -64,7 +67,7 @@ public class PostControllerImpl implements PostController {
 
     @GetMapping("author/{author}")
     @ResponseStatus(HttpStatus.OK)
-    public PageableResponse<PostResponse> getPostsByAuthor(int page_number, int size,@PathVariable UUID author) {
+    public PageableResponse<PostResponse> getPostsByAuthor(int page_number, int size,@PathVariable String author) {
         return postService.getPostsByAuthor(page_number,size,author);
     }
 

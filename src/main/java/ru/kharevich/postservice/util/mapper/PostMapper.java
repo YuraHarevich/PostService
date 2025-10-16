@@ -15,7 +15,7 @@ import java.util.List;
         injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface PostMapper {
-    PostResponse toResponse(Post post, byte[] file);
+    PostResponse toResponse(Post post, List<byte[]> files);
 
     Post toEntity(PostRequest postRequest);
 

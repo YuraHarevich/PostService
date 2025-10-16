@@ -17,4 +17,6 @@
         <tagDatabase tag="all_tables_are_created"/>
     </changeSet>
 
+    <include file="v1/changesets/03-changeset-update-tables.xml" relativeToChangelogFile="true"/>
+
 </databaseChangeLog>

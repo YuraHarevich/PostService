@@ -24,13 +24,7 @@ spring:
         config:
           image-client:
             url: "http://localhost:8010/api/v1/images"
-            loggerLevel: full
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
-logging:
-  level:
-    ru.kharevich.postservice.clients.ImageClient: DEBUG
-    ru.kharevich.postservice.clients.impl.ImageClientDev: DEBUG
-    org.springframework.cloud.openfeign: DEBUG
