@@ -24,6 +24,18 @@ spring:
         config:
           image-client:
             url: "http://localhost:8010/api/v1/images"
+  kafka:
+    topic:
+      activity: activity-topic
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: activity-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+        spring.json.type.mapping: activityResponse:ru.kharevich.postservice.dto.response.ActivityResponse
   servlet:
     multipart:
       max-file-size: 10MB

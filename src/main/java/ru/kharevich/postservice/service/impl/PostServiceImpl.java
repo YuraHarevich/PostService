@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.kharevich.postservice.clients.ImageClient;
 import ru.kharevich.postservice.dto.request.PostRequest;
+import ru.kharevich.postservice.dto.response.ActivityResponse;
 import ru.kharevich.postservice.dto.response.ImageResponse;
 import ru.kharevich.postservice.dto.response.PageableResponse;
 import ru.kharevich.postservice.dto.response.PostResponse;
@@ -92,6 +93,13 @@ public class PostServiceImpl implements PostService {
                                                            String author) {
         Page<Post> posts = postRepository.findByAuthor(author, PageRequest.of(pageNumber, size));
         return fillPostsWithImages(posts, pageNumber, size);
+    }
+
+    public void updateActivity(ActivityResponse activityResponse) {
+        Post post = postRepository.findById(activityResponse.postId()).orElseThrow(() -> new PostNotFoundException("Post not found"));
+        post.setNumberOfComments(activityResponse.numberOfComments());
+        post.setNumberOfLikes(activityResponse.numberOfLikes());
+        postRepository.save(post);
     }
 
     private PageableResponse<PostResponse> fillPostsWithImages(Page<Post> posts,
